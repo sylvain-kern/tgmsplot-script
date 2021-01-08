@@ -1,0 +1,96 @@
+/*	
+*	import-bl.ogs
+*	Script file to import BASELINE data in TXT format
+*	RUN import-ms.ogs before this file	
+*/
+
+
+string mydir$ = "C:/Users/Admin/Desktop/sylvain/";
+dlgfile group:=*.txt init:=mydir$ title:="Open baseline data";	//asking the user for an ASCII data file for MS
+datapath_bl$ = fname$;
+
+//string datapath_bl$ = mydir$+"donnees-test\Baseline\exported\ExpDat_He Med Conic Al2O3 34mg 503010K.txt"; //test data
+
+/*	Import the BASELINE piece of data */
+
+ty "Strarting BL data importation...";
+
+
+impasc fname:=datapath_bl$ 
+	options.PartImp.Partial:=1
+	options.PartImp.FirstCol:=1
+	options.PartImp.LastCol:=4
+	options.PartImp.FirstRow:=1
+	options.PartImp.LastRow:=0
+
+	options.Hdr.MainHdrLns:=34
+	options.Hdr.AutoSubHdr:=0
+	options.Hdr.SubHdrLns:=1
+	options.Hdr.Units:=0
+
+	options.ImpMode:=4		                // start with a new sheet
+	options.Cols.AutoColTypes:=2
+	options.Sparklines:=1                  	// turn off sparklines
+	options.Names.AutoNames:=0              // turn off auto rename
+	options.Names.FNameToSht:=0             // don't rename sheet to file name
+	options.Names.FNameToBk:=0				// don't rename sheet to file name
+	options.Miscellaneous.LeadingZeros:=1;  // remove leading zeros
+
+
+/*	Format the worksheet */
+
+wks.name$ = bl data;
+page.active$ = bl data;
+
+col(A)[G]$ = temp;
+col(temp)[L]$ = temperature;
+col(temp)[U]$ = °C;
+
+col(B)[G]$ = time;
+col(time)[L]$ = time;
+col(time)[U]$ = min;
+
+col(C)[G]$ = mass;
+col(mass)[L]$ = mass;
+col(mass)[U]$ = %;		// WARNING: assuming TG baseline data is in %
+
+// uncomment the following line and give the sample mass if the TG baseline is in mg
+//col(mass) = 100+(Col(mass)/(Mass of the sample))*100;
+
+colmove col(time) operation:=first;
+
+wks.col2.type = 4;
+wks.col1.type = 1;
+
+ty "BL data importation done!";
+ty "";
+
+/*	Interpolating baseline mass data vs temperature with the tg temperature */
+
+ty "Interpolating BL mass...";
+
+page.active$ = bl data;
+range bl_temp = col(temp);
+range bl_mass = col(mass);
+
+page.active$ = tg data;
+interp1 ix:=col(temp) iy:=(bl_temp,bl_mass) method:=linear ox:=col(I);
+col(I)[L]$ = interpolation bl mass;
+col(I)[U]$ = %;		// assuming the bl mass is given in %
+
+wks.addcol(intblsub);
+col(intblsub)=col(mass)-col(I);
+col(intblsub)[L]$ = mass loss interpolated;
+col(intblsub)[U]$ = %;		// assuming the bl mass is given in %
+
+ty "BL mass interpolation done!";
+ty "\n";
+
+page.active$ = bl data;
+range blmass = col(mass);
+page.active$ = tg data;
+
+wks.addcol(blsub);
+col(blsub)=col(mass)-blmass;
+col(blsub)[L]$ = mass loss;
+col(blsub)[U]$ = %;		// assuming the bl mass is given in %

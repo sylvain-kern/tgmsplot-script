@@ -1,0 +1,115 @@
+/*	
+*	import-tg.ogs
+*	Script file to import TG data in TXT format
+*
+*/
+
+
+string mydir$ = "C:/Users/Admin/Desktop/sylvain/";
+dlgfile group:=*.txt init:=mydir$ title:="Open TG data";	//asking the user for an ASCII data file for MS
+datapath_tg$ = fname$;
+
+//string datapath_tg$ = mydir$+"donnees-test\\TGA\He\40DVB E36 M 379mg He 1500C 503010K.txt"; //test data
+
+
+/*	Import the TG piece of data */
+
+ty "Starting TG data importation...";
+
+impasc fname:=datapath_tg$ 
+	options.PartImp.Partial:=1
+	options.PartImp.FirstCol:=1
+	options.PartImp.LastCol:=4
+	options.PartImp.FirstRow:=1
+	options.PartImp.LastRow:=0
+
+	options.Hdr.MainHdrLns:=34
+	options.Hdr.AutoSubHdr:=0
+	options.Hdr.SubHdrLns:=1
+	options.Hdr.Units:=0
+
+	options.ImpMode:=4                        /* start with a new sheet */
+	options.Cols.AutoColTypes:=2
+	options.Sparklines:=1                     /* turn off sparklines */
+	options.Names.AutoNames:=0                /* turn off auto rename */
+	options.Names.FNameToSht:=1               /* rename sheet to file name */
+	options.Miscellaneous.LeadingZeros:=1;    /* remove leading zeros */
+
+
+/*	Format the worksheet */
+
+wks.name$ = tg data;
+
+col(A)[G]$ = temp;
+col(temp)[L]$ = temperature;
+col(temp)[U]$ = °C;
+
+col(B)[G]$ = time;
+col(time)[L]$ = time;
+col(time)[U]$ = min;
+
+col(C)[G]$ = mass;
+col(mass)[L]$ = mass;
+col(mass)[U]$ = %;
+
+colmove col(time) operation:=first;
+wks.col2.type = 4;
+wks.col1.type = 1;
+
+ty "TG data importation done!";
+ty "";
+
+
+/*	Polynomial fitting
+*	I start with degree 1 - assuming the temperature grows linearly 
+*/
+
+ty "Fitting temperature growth...";
+
+page.active$ = tg data;
+
+wks.addcol(PolyCoef);  // add a new column for polynomial coefficients
+
+range rr = col(1);		//calculating size of first segment (where temperature is approx. linear)
+int nrows = rr.GetSize();
+int nfirstsegment = 0;
+for(int i=1; i<=nrows; i++) {
+	if(col(4)[i]==1) {
+		nfirstsegment++;
+	}
+	else if(col(4)[i]==2) {
+		break;
+	}
+}
+
+
+col(firstsegment)[1] = nfirstsegment;
+ty Size of first segment: $(nfirstsegment);
+
+
+fitPoly iy:=(1[1:$(nfirstsegment)],2[1:$(nfirstsegment)]) polyorder:=1 coef:=col(PolyCoef);	// performs fitting col 1 (x) and 2 (y) and stores the coefs in col(PolyCoef) 
+fitPoly.= ;	// displays regression information (r0 etc.)
+
+double T_0 = col(PolyCoef)[1];	// get polynomial coefs
+double rate = col(PolyCoef)[2];
+
+ty "T_0 = "$(T_0);
+ty "rate = "$(rate);	// display poly coefs
+	
+
+ty "Temperature growth fit done!";
+ty "\n";
+
+
+/*	calculating temperature points in MS worksheet */
+
+page.active$ = ms data;
+//wks.addcol(temp);
+colmove col(temp) operation:=first;
+col(temp)[L]$ = temperature;
+col(temp)[U]$ = °C;
+
+
+col(temp) = T_0 + rate*col(reltime);
+
+wks.col1.type = 4;

@@ -1,0 +1,238 @@
+/*	
+*	import-ms.ogs
+*	Script file to import MS data in ASCII format
+*
+*/
+
+
+string mydir$ = "C:/Users/Admin/Desktop/sylvain/";
+dlgfile group:=*.asc init:=mydir$ title:="Open MS data";	//asking the user for an ASCII data file for MS
+datapath_ms$ = fname$;
+
+//string datapath_ms$ = mydir$+"donnees-test\MS\He\40dvb e36 m 379mg he 1500c 503010k.asc"; //test data
+
+
+/*	Detecting the different data sets in the file */
+
+ty "Starting MS data scan for worksheet importation...";
+
+impasc fname:=datapath_ms$ 
+	options.PartImp.Partial:=1
+	options.PartImp.FirstCol:=1
+	options.PartImp.LastCol:=32
+	options.PartImp.FirstRow:=1
+	options.PartImp.LastRow:=0
+
+	options.Hdr.MainHdrLns:=0
+	options.Hdr.AutoSubHdr:=0
+	options.Hdr.SubHdrLns:=1
+	options.Hdr.Units:=0
+
+	options.ImpMode:=3                        /* start with a new book */
+	options.Cols.AutoColTypes:=2
+	options.Sparklines:=1                     /* turn off sparklines */
+	options.Names.AutoNames:=0                /* turn off auto rename */
+	options.Names.FNameToSht:=1               /* rename sheet to file name */
+	options.Miscellaneous.LeadingZeros:=1;    /* remove leading zeros */
+	
+
+range rr = col(A);
+nrows = rr.GetSize();
+wks.col(A).format = 2;
+
+
+for(int i=1; i<=nrows; i++) {
+	if(col(A)[$(i)]$ == "Datablock 0"){
+		col(B)[1]=i;	//storing values in cells because variables have no scope and reset when exiting if
+	}
+	if(col(A)[$(i)]$ == "Cycle"){
+		col(B)[2]=i;	//same as before
+		break;
+	}
+}
+
+int datablockline = col(B)[1];	// now i can store them in proper variables
+int cycleline = col(B)[2];
+
+//ty $(datablockline);
+//ty $(cycleline);
+
+int startline1 = datablockline+1;
+int endline1 = cycleline -1;
+
+int startline2 = cycleline;
+
+layer -dd;	//delete the worksheet cuz it is not needed anymore
+
+ty "MS scan done!";
+ty "";
+
+
+
+/*	Import the first MS piece of data */
+
+ty "Starting MS data importation...";
+
+impasc fname:=datapath_ms$ 
+	options.PartImp.Partial:=1
+	options.PartImp.FirstCol:=1
+	options.PartImp.LastCol:=6
+	options.PartImp.FirstRow:=$(startline1)
+	options.PartImp.LastRow:=$(endline1)
+
+	options.Hdr.MainHdrLns:=0
+	options.Hdr.AutoSubHdr:=0
+	options.Hdr.SubHdrLns:=0
+	options.Hdr.Units:=0
+
+	options.ImpMode:=3                        /* start with a new book */
+	options.Cols.AutoColTypes:=2
+	options.Sparklines:=1                     /* turn off sparklines */
+	options.Names.AutoNames:=0                /* turn off auto rename */
+	options.Names.FNameToSht:=1               /* rename sheet to file name */
+	options.Miscellaneous.LeadingZeros:=1;  
+
+wks.name$ = mz sheet;
+
+
+/*	Import the second MS piece of data */
+	
+impasc fname:=datapath_ms$ 
+	options.PartImp.Partial:=1
+	options.PartImp.FirstCol:=1
+	options.PartImp.LastCol:=30
+	options.PartImp.FirstRow:=$(startline2)
+	options.PartImp.LastRow:=0
+
+	options.Hdr.MainHdrLns:=1
+	options.Hdr.AutoSubHdr:=0
+	options.Hdr.SubHdrLns:=1
+	options.Hdr.Units:=0
+
+	options.ImpMode:=4
+	options.Cols.NumCols:=30
+	options.Cols.AutoColTypes:=2
+	options.Sparklines:=1                     /* turn off sparklines */
+	options.Names.AutoNames:=0                /* turn off auto rename */
+	options.Names.FNameToSht:=1               /* rename sheet to file name */
+	options.Miscellaneous.LeadingZeros:=1;    /* remove leading zeros */
+	
+wks.name$ = ms data;
+
+
+/*	Counting datablocks information */
+
+ty "Counting datablocks...";
+
+page.active$ = mz sheet;
+
+range datablocks = col(A);
+
+int ndatablocks = 0; // this will be the number of datablocks
+
+for(int i=1; i<datablocks.GetSize(); i++) {
+	if(col(C)[$(i)]$ != "min:") {
+		ndatablocks++;
+	}
+}
+
+ty $(ndatablocks) datablock(s).;
+
+
+/*	Naming current measurements with mz */
+
+ty "Pasting the M/z labels...";
+
+wks.addcol(mzlabels);
+
+if(ndatablocks == 1) {
+	range datablock = col(A);
+	nmz = datablock.GetSize() - 1;
+	for(int i=2; i<=nmz+1; i++) {
+		string mz$ = "M/z = "+col(B)[i]$;
+		col(mzlabels)[$(i)]$ = mz$;
+		page.active$ = ms data;
+		col($(i+3))[L]$ = mz$;
+		col($(i+3))[U]$ = "A";
+		page.active$ = mz sheet;
+	}
+}
+else {
+	range datablock = col(A);
+	nmz = datablock.GetSize() - 7;
+	for(int i=4; i<=nmz+4; i++) {
+		if(col(A)[$(i)]$ == "Datablock 2") {
+			break;
+		}
+		else {
+			string mz$ = "M/z = "+col(B)[i]$;
+			col(mzlabels)[$(i)]$ = mz$;
+			page.active$ = ms data;
+			col($(i+2))[L]$ = mz$;
+			col($(i+2))[U]$ = "A";
+			page.active$ = mz sheet;
+		}
+	}
+}
+
+/*	Formatting the first data table */
+
+page.active$ = mz sheet;
+
+col(A)[G]$ = datablock;
+col(B)[G]$ = mz;
+col(D)[G]$ = cmin;
+col(F)[G]$ = cmax;
+
+delete col(C);
+delete col(E);
+  
+col(mz)[L]$ = M/z;
+col(cmin)[L]$ = minimal current;
+col(cmin)[U]$ = A;
+col(cmax)[L]$ = maximal current;
+col(cmax)[U]$ = A;
+
+wks.nCols++;
+
+col(A)[G]$ = irelative;
+col(irelative)[L]$ = relative intensity;
+
+col(irelative) = col(cmax)/col(cmin);
+
+/*	Formatting the second data table */
+
+page.active$ = ms data;
+
+delete col(A);
+delete col(C1);
+
+col(B)[G]$ = date;
+col(date)[L]$ = date;
+
+col(C2)[G]$ = reltime;
+col(reltime)[L]$ = time;
+col(reltime) = col(reltime)/60;
+col(reltime)[U]$ = min;
+
+wks.col(reltime).type = 4;	// set reltime column to x
+
+wks.addcol(temp);
+colmove col(temp) operation:=first;
+
+colmove col(reltime) operation:=first;
+
+ty "MS data importation done!";
+ty "\n";
+
+
+/* Saving the number of datablocks */
+
+page.active$ = mz sheet;
+
+wks.addcol(ndblks);
+col(ndblks)[1] = ndatablocks;
+
+
+
+/*	T R A S H */

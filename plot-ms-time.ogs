@@ -1,0 +1,118 @@
+/*	
+*	plot-ms-temp.ogs
+*	Asks the user to choose for M/z parameters and plots the MS data
+*	
+*/
+
+ty "Preparing to plot...";
+ty "";
+
+page.active$ = mz sheet;
+
+StringArray saTexts;
+Dataset dsDefaults;
+
+
+// Add texts to StringArray and default checked states to Dataset (0=unchecked, 1=checked).
+
+range rr = col(mzlabels);
+
+int ndatablocks = col(ndblks)[1];
+
+if(ndatablocks==1) {
+	for(int i=2; i<=rr.GetSize(); i++) {
+		saTexts.add(col(mz)[$(i)]$);
+		dsdefaults.Add(0);
+	}
+}
+else if(ndatablocks==4){
+	for(int i=4; i<=rr.GetSize(); i++) {
+		saTexts.add(col(mz)[$(i)]$);
+		dsdefaults.Add(0);
+	}
+}
+else {
+	for(int i=14; i<=rr.GetSize(); i++) {
+		saTexts.add(col(mz)[$(i)]$);
+		dsdefaults.Add(0);
+	}
+}
+
+	
+// Combine texts in StringArray into a single string variable with each option separated by a "|".
+string strTexts$;
+int nSize = saTexts.GetSize();
+loop(nn, 1, nSize)
+{
+	strTexts$ += saTexts.GetAt(nn)$;
+	if (nn != nSize)
+		strTexts$ += "|";
+}
+
+ 
+Dataset dsChecked;	// Create a Dataset to hold the indices of the checkboxes that get checked while dialog is open.
+// Integer flag to determine if Cancel button was clicked in dialog.
+// Must set it to true (1) to work properly.
+int nCancelled = 1;
+
+// Surround X-Function call with braces to trap any error returned during execution.
+// If user clicks the Cancel button, there would be an error generated. This will stop that behavior.
+{
+dlgChkList inames:=strTexts$ title:="MS vs time" desc:="Choose the M/z to plot:" ochks:=dsDefaults osel:=dsChecked;
+
+// If user clicked the Cancel button, the following line will not run and nCancelled will remain equal to 1.
+nCancelled = 0;
+}
+
+// Test of user clicked the Cancel button and if so, stop script execution.
+if (1 == nCancelled)
+	return;
+
+// User did not click Cancel, so output the checked checkboxes by looping through the Dataset of indices
+// and using the values from that Dataset to get the relevant Texts from the original StringArray.
+type "The following M/z curves will be plotted:";
+int nSize = dsChecked.GetSize();
+loop(nn, 1, nSize)
+{
+	// Because GetAt() returns a string, don't forget to add a $ at end of function call.
+	type saTexts.GetAt(dsChecked[nn])$;
+}
+
+ty "";
+
+int layertype = 1;		// 1: linear,  2: log
+
+page.active$ = ms data;
+
+string wn$=%H;
+string ms_wk$ = "ms data";
+string tg_wk$ = "tg data";
+
+if(ndatablocks == 1){
+	for(int i=1; i<=dsChecked.GetSize(); i++){	
+		plotxy iy:=[wn$]ms_wk$!(col(time),$(dsChecked[$(i)]+3)) plot:=202 size:=4 ogl:=1 color:= $(i);	// plot vs temperature
+		set %c -kf 1; //Change interior to be open
+	}
+}
+else if(ndatablocks == 4) {
+	for(int i=1; i<=dsChecked.GetSize(); i++){	
+		plotxy iy:=[wn$]ms_wk$!(col(time),$(dsChecked[$(i)]+4)) plot:=202 size:=4 ogl:=1 color:= $(i);	// plot vs temperature
+		set %c -kf 1; //Change interior to be open
+	}
+}
+else {
+	for(int i=1; i<=dsChecked.GetSize(); i++){	
+		plotxy iy:=[wn$]ms_wk$!(col(time),$(dsChecked[$(i)]+4)) plot:=202 size:=4 ogl:=1 color:= $(i);	// plot vs temperature
+		set %c -kf 1; //Change interior to be open
+	}	
+}
+
+
+LAYER.Y.type=$(layertype);
+
+
+ty "Data plotted!";
+ty "";
+ty "If you want to do another plot, close or minimise this one before.";
+
+win -a %(wn$);

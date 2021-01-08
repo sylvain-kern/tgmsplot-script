@@ -1,0 +1,11 @@
+cd;
+
+//run.file(C:\Users\Admin\Desktop\sylvain\_stage\procedures origin\tgmsplot-script\import-ms.ogs);
+//run.file(C:\Users\Admin\Desktop\sylvain\_stage\procedures origin\tgmsplot-script\import-tg.ogs);
+//run.file(C:\Users\Admin\Desktop\sylvain\_stage\procedures origin\tgmsplot-script\import-bl.ogs);
+//run.file(C:\Users\Admin\Desktop\sylvain\_stage\procedures origin\tgmsplot-script\plot.ogs)
+
+run.file(tgmsplot-script\import-ms.ogs);
+run.file(tgmsplot-script\import-tg.ogs);
+run.file(tgmsplot-script\import-bl.ogs);
+run.file(tgmsplot-script\plot.ogs)
