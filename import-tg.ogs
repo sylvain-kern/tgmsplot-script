@@ -11,6 +11,45 @@ datapath_tg$ = fname$;
 
 //string datapath_tg$ = mydir$+"donnees-test\\TGA\He\40DVB E36 M 379mg He 1500C 503010K.txt"; //test data
 
+ty "Starting TG data scan...";
+
+impasc fname:=datapath_tg$ 
+	options.PartImp.Partial:=1
+	options.PartImp.FirstCol:=1
+	options.PartImp.LastCol:=4
+	options.PartImp.FirstRow:=1
+	options.PartImp.LastRow:=0
+
+	options.Hdr.MainHdrLns:=0
+	options.Hdr.AutoSubHdr:=0
+	options.Hdr.SubHdrLns:=1
+	options.Hdr.Units:=0
+
+	options.ImpMode:=4                        /* start with a new sheet */
+	options.Cols.AutoColTypes:=2
+	options.Sparklines:=1                     /* turn off sparklines */
+	options.Names.AutoNames:=0                /* turn off auto rename */
+	options.Names.FNameToSht:=1               /* rename sheet to file name */
+	options.Miscellaneous.LeadingZeros:=1;    /* remove leading zeros */
+
+
+range rr=col(A);
+int firstline=0;
+for (int i; i <= rr.GetSize(); i++) {
+	if(rr[$(i)]$ == ##Temp./°C ) {
+		break;
+	}
+	else {
+		firstline++;
+	}
+}
+
+ty $(firstline);
+
+layer -d;
+
+ty "TG data scan done!";
+ty;
 
 /*	Import the TG piece of data */
 
@@ -23,7 +62,7 @@ impasc fname:=datapath_tg$
 	options.PartImp.FirstRow:=1
 	options.PartImp.LastRow:=0
 
-	options.Hdr.MainHdrLns:=34
+	options.Hdr.MainHdrLns:=$(firstline)-1
 	options.Hdr.AutoSubHdr:=0
 	options.Hdr.SubHdrLns:=1
 	options.Hdr.Units:=0
@@ -70,22 +109,68 @@ page.active$ = tg data;
 
 wks.addcol(PolyCoef);  // add a new column for polynomial coefficients
 
-range rr = col(1);		//calculating size of first segment (where temperature is approx. linear)
-int nrows = rr.GetSize();
-int nfirstsegment = 0;
-for(int i=1; i<=nrows; i++) {
-	if(col(4)[i]==1) {
-		nfirstsegment++;
+if(col(4)[1]==1) {
+
+	wks.addcol(segments);
+	range rr = col(1);		//calculating size of first segment (where temperature is approx. linear)
+	int nrows = rr.GetSize();
+
+	//for(int i=1; i<=nrows; i++) {
+		//if(col(4)[i]==1) {
+			//nfirstsegment++;
+		//}
+		//else if(col(4)[i]==2) {
+			//break;
+		//}
+	//}
+
+	for(int i=1; i<=nrows; i++) {
+		switch(col(4)[i]) {
+		case 1:
+			col(segments)[1]=i;
+			break;
+		case 2:
+			col(segments)[2]=i;
+			break;
+		case 3:
+			col(segments)[3]=i;
+			break;
+		case 4:
+			col(segments)[4]=i;
+			break;
+		case 5:
+			col(segments)[5]=i;
+			break;
+		case 6:
+			col(segments)[6]=i;
+			break;
+		case 7:
+			col(segments)[7]=i;
+			break;
+		case 8:
+			col(segments)[8]=i;
+			break;
+		case 9:
+			col(segments)[9]=i;
+			break;
+		default:
+			col(segments)[$(col(d)[$(nrows)]]=$(nrows);
+			break;
+		}
 	}
-	else if(col(4)[i]==2) {
-		break;
-	}
+	int nfirstsegment = col(segments)[1];
+
+	col(firstsegment)[1] = nfirstsegment;
+	ty Size of first segment: $(nfirstsegment);
+
 }
-
-
-col(firstsegment)[1] = nfirstsegment;
-ty Size of first segment: $(nfirstsegment);
-
+else {
+	range rr = col(1);
+	int nfirstsegment = rr.getSize();
+	col(firstsegment)[1] = nfirstsegment;
+	col(segments)[1] = nfirstsegment;
+	ty Size of first segment: $(nfirstsegment);
+}
 
 fitPoly iy:=(1[1:$(nfirstsegment)],2[1:$(nfirstsegment)]) polyorder:=1 coef:=col(PolyCoef);	// performs fitting col 1 (x) and 2 (y) and stores the coefs in col(PolyCoef) 
 fitPoly.= ;	// displays regression information (r0 etc.)
@@ -100,6 +185,8 @@ ty "rate = "$(rate);	// display poly coefs
 ty "Temperature growth fit done!";
 ty "\n";
 
+run.file(tgmsplot-script\import-bl.ogs);	// import bl
+
 
 /*	calculating temperature points in MS worksheet */
 
@@ -113,3 +200,6 @@ col(temp)[U]$ = °C;
 col(temp) = T_0 + rate*col(reltime);
 
 wks.col1.type = 4;
+
+
+

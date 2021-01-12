@@ -7,5 +7,5 @@ cd;
 
 run.file(tgmsplot-script\import-ms.ogs);
 run.file(tgmsplot-script\import-tg.ogs);
-run.file(tgmsplot-script\import-bl.ogs);
+//run.file(tgmsplot-script\import-bl.ogs);
 run.file(tgmsplot-script\plot.ogs)
