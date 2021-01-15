@@ -2,19 +2,19 @@ readme.md
 
 # tgmsplot-script
 
-`tgmsplot-script` is a script for Origin software to automate data treatment and plot for mass spectrometry and thermogravimetry experiences using the Netzsch equipment.
+`tgmsplot-script` is a script for Origin software to automate data treatment and plot for mass spectrometry and thermogravimetry experiments using Netzsch equipment.
 
-Origin's website: https://www.originlab.com
-
-This file describes how to install and use it. For more details on in-depth use, see the documentation in the following folder:
+This file describes how to install and use it. For more details on in-depth use, see the procedure in the following folder:
 
 ```
 procedure/procedure.pdf
 ```
 
+Origin's website: https://www.originlab.com
+
 ## Installation
 
-Run `setup.exe` in the setup folder. When it asks for the installation folder, please check that your Origin files folder is the same (it may change with your version of Origin or the way it is installed on your computer). In most of the cases the default folder should work though.
+Run `setup.exe` in the setup folder. When it asks for the installation path, please check that your Origin files folder is the same (it may change with your version of Origin or the way it is installed on your computer). In most of the cases the default folder should work though.
 
 To install manually, just put the `tgmsplot-script` folder in the Origin files folder:
 ```
@@ -25,7 +25,7 @@ Again, the very folder may change depending on your version of Origin, so be car
 
 ## Usage
 
-The scripts will process the exported files from Netzsch Aëolos and Proteus Dispsav software in `.asc` or `.txt` format. Make sure you have exported all files for the MS, TG and BL before starting the program. See the documentation for more details.
+The scripts will process the exported files from Netzsch Aëolos and Proteus Dispsav software in `.asc` or `.txt` format. Make sure you have exported all files for the MS, TG and BL before starting the program. See the procedure for more details.
 
 Open Origin and run the files via the Command window: on the right of the top toolbar or by pressing `Alt+"`. Then run the desired files with:
 ```
