@@ -1,3 +1,5 @@
+readme.md
+
 # tgms-plot-script
 
 `tgmsplot-script` is a script for Origin software to automate data treatment and plot for mass spectrometry and thermogravimetry experiences using the Netzsch equipment.
