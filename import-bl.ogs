@@ -11,10 +11,9 @@ datapath_bl$ = fname$;
 
 //string datapath_bl$ = mydir$+"donnees-test\Baseline\exported\ExpDat_He Med Conic Al2O3 34mg 503010K.txt"; //test data
 
-/*	Import the BASELINE piece of data */
+/*	Scan Baseline file */
 
-ty "Strarting BL data importation...";
-
+ty "Starting BL data scan...";
 
 impasc fname:=datapath_bl$ 
 	options.PartImp.Partial:=1
@@ -23,21 +22,60 @@ impasc fname:=datapath_bl$
 	options.PartImp.FirstRow:=1
 	options.PartImp.LastRow:=0
 
-	options.Hdr.MainHdrLns:=34
+	options.Hdr.MainHdrLns:=0
 	options.Hdr.AutoSubHdr:=0
 	options.Hdr.SubHdrLns:=1
 	options.Hdr.Units:=0
 
-	options.ImpMode:=4		                // start with a new sheet
+	options.ImpMode:=4                        /* start with a new sheet */
 	options.Cols.AutoColTypes:=2
-	options.Sparklines:=1                  	// turn off sparklines
-	options.Names.AutoNames:=0              // turn off auto rename
-	options.Names.FNameToSht:=0             // don't rename sheet to file name
-	options.Names.FNameToBk:=0				// don't rename sheet to file name
-	options.Miscellaneous.LeadingZeros:=1;  // remove leading zeros
+	options.Sparklines:=1                     /* turn off sparklines */
+	options.Names.AutoNames:=0                /* turn off auto rename */
+	options.Names.FNameToSht:=1               /* rename sheet to file name */
+	options.Miscellaneous.LeadingZeros:=1;    /* remove leading zeros */
 
 
-/*	Format the worksheet */
+range rr=col(A);
+int firstline=0;
+for (int i; i <= rr.GetSize(); i++) {
+	if(rr[$(i)]$ == ##Temp./°C ) {
+		break;
+	}
+	else {
+		firstline++;
+	}
+}
+
+ty $(firstline);
+
+layer -d;
+
+ty "BL data scan done!";
+ty;
+
+/*	Import Baaseline file */
+
+ty "Starting BL data importation...";
+
+impasc fname:=datapath_bl$ 
+	options.PartImp.Partial:=1
+	options.PartImp.FirstCol:=1
+	options.PartImp.LastCol:=4
+	options.PartImp.FirstRow:=1
+	options.PartImp.LastRow:=0
+
+	options.Hdr.MainHdrLns:=$(firstline)-1
+	options.Hdr.AutoSubHdr:=0
+	options.Hdr.SubHdrLns:=1
+	options.Hdr.Units:=0
+
+	options.ImpMode:=4                        /* start with a new sheet */
+	options.Cols.AutoColTypes:=2
+	options.Sparklines:=1                     /* turn off sparklines */
+	options.Names.AutoNames:=0                /* turn off auto rename */
+	options.Names.FNameToSht:=1               /* rename sheet to file name */
+	options.Miscellaneous.LeadingZeros:=1;    /* remove leading zeros */
+
 
 wks.name$ = bl data;
 page.active$ = bl data;
@@ -67,30 +105,25 @@ ty "";
 
 /*	Interpolating baseline mass data vs temperature with the tg temperature */
 
-ty "Interpolating BL mass...";
+ty "Substracting BL mass.. ";
 
 page.active$ = bl data;
 range bl_temp = col(temp);
 range bl_mass = col(mass);
 
 page.active$ = tg data;
-interp1 ix:=col(temp) iy:=(bl_temp,bl_mass) method:=linear ox:=col(I);
-col(I)[L]$ = interpolation bl mass;
-col(I)[U]$ = %;		// assuming the bl mass is given in %
+wks.addcol(bltemp);
+col(bltemp)=bl_temp;
+wks.addcol(blmass);
+col(blmass)=bl_mass;
+wks.addcol(massloss);
+col(massloss)=col(mass)-col(blmass);
+col(massloss)[L]$ = mass loss;
+col(massloss)[U]$ = %;		// assuming the bl mass is given in %
 
-wks.addcol(intblsub);
-col(intblsub)=col(mass)-col(I);
-col(intblsub)[L]$ = mass loss interpolated;
-col(intblsub)[U]$ = %;		// assuming the bl mass is given in %
-
-ty "BL mass interpolation done!";
+ty "Substraction done!";
 ty "\n";
 
-page.active$ = bl data;
-range blmass = col(mass);
-page.active$ = tg data;
+sparklines sel:=0;
 
-wks.addcol(blsub);
-col(blsub)=col(mass)-blmass;
-col(blsub)[L]$ = mass loss;
-col(blsub)[U]$ = %;		// assuming the bl mass is given in %
+win -r %H data;

@@ -1,0 +1,179 @@
+/*	
+*	plot-ms-temp.ogs
+*	Asks the user to choose for M/z parameters and plots the MS data
+*	
+*/
+
+ty "Preparing to plot...";
+ty "";
+
+worksheet -b data;
+page.active$ = ms data;
+string wn$=%H;
+string ms_wk$ = "ms data";
+string mz_wk$ = "mz sheet";
+string tg_wk$ = "tg data";
+
+
+StringArray saTexts;
+Dataset dsDefaults;
+
+
+/* Add texts to StringArray and default checked states to Dataset (0=unchecked, 1=checked).
+*/
+page.active$ = ms data;
+for(int i=3; i<=wks.ncols; i++) {
+	wks.col = i;
+	saTexts.add(wks.col.lname$);
+	dsDefaults.Add(0);
+}
+
+/*Combine texts in StringArray into a single string variable with each option separated by a "|".
+*/
+string strTexts$;
+int nSize = saTexts.GetSize();
+loop(nn, 1, nSize)
+{
+	strTexts$ += saTexts.GetAt(nn)$;
+	if (nn != nSize)
+		strTexts$ += "|";
+}
+
+ 
+Dataset dsChecked;	// Create a Dataset to hold the indices of the checkboxes that get checked while dialog is open.
+// Integer flag to determine if Cancel button was clicked in dialog.
+// Must set it to true (1) to work properly.
+int nCancelled = 1;
+
+/* Surround X-Function call with braces to trap any error returned during execution.
+* If user clicks the Cancel button, there would be an error generated. This will stop that behavior.
+*/
+{
+dlgChkList inames:=strTexts$ title:="MS vs time" desc:="Choose the M/z to plot:" ochks:=dsDefaults osel:=dsChecked;
+// If user clicked the Cancel button, the following line will not run and nCancelled will remain equal to 1.
+nCancelled = 0;
+}
+
+/* Test of user clicked the Cancel button and if so, stop script execution.
+*/
+if (1 == nCancelled)
+	return;
+
+/* User did not click Cancel, so output the checked checkboxes by looping through the Dataset of indices
+* and using the values from that Dataset to get the relevant Texts from the original StringArray.
+*/
+type "The following M/z curves will be plotted:";
+int nSize = dsChecked.GetSize();
+loop(nn, 1, nSize)
+{
+	type saTexts.GetAt(dsChecked[nn])$;
+}
+ty "";
+
+/*	General worksheet notation
+*/
+page.active$ = ms data;
+
+/*	X axis ange definition
+*/
+range rr = col(time);
+double tmin = rr[1];
+double tmax = rr[$(rr.GetSize())];
+
+/*	P L O T T I N G
+*	S E L E C T E D
+*	 C O L U M N S
+*/
+
+
+int current_layer=0;
+current_layer = plottime!page.nlayers;
+ty "starting at layer $(current_layer)";
+
+for(int i=1; i<=dsChecked.GetSize(); i++){
+	int colnum = dsChecked[$(i)]+2;
+	current_layer=current_layer+1;
+	
+	ty "plotting curve at layer $(current_layer)";
+	
+	plotxy iy:=[wn$]ms_wk$!(col(time),$(colnum)) plot:=202 size:=6 ogl:=[plottime]$(current_layer)! color:= $(current_layer);	// plot vs temperature
+	
+	win -a plottime;
+	page.active$ = $(current_layer);
+	
+	/* layer setting for X axis
+	*/
+	if(current_layer == 1) {
+		layer.x.from = tmin;
+		layer.x.to = tmax;
+	}
+	else if(current_layer > 1){
+		laylink igl:=1 destlayers:=$(current_layer) Xaxis:=1;
+		ty "layer $(current_layer) linked to layer 1";
+	}
+	/* layer settings for Y axis
+	*/
+	range rr = [wn$]ms_wk$!col($(colnum));
+	double imin = rr[1];
+	double imax = max(rr);
+	//ty $(imin);
+	//ty $(imax);
+	imax = imax*1.1;
+	imin = imin - (imax-imin)*0.4;
+	if(colnum==3 || colnum==4) {
+		ty bite;
+		legend.x1 = legend.x1 - (tmax-tmin)/8;
+		legend.y1=-10;
+		layer.y1.ticks=10;
+		layer.y.showLabel=1;
+		layer.y.label.font=font(Times New Roman);
+		yl.text$ = "Mass loss / %";
+	}	
+	else {	
+		layer.y.from = imin;
+		layer.y.to = imax;
+		// legend position
+		legend.y1 = legend.y1 - (imax-imin)*(current_layer/15) - (imax-imin)/10;
+		legend.x1 = legend.x1 - (tmax-tmin)/8;
+		layer.y1.ticks=0;
+		layer.y1.showLabels=0;
+	}
+	
+	/* layer settings for  a e s t h e t i c c s
+	*/
+	// axes
+	//layer.x.showLabels=1;
+	if(current_layer == 1) {
+		layer.x.showAxes=3;
+		layer.y.showAxes=3;
+		layer.x.showLabels=1;
+		layer.x.label.font=font(Times New Roman);
+		layer.x1.ticks=10;
+		layer.x.TicksByData$ = 0 20 40 60 80 100 120 140;
+		layer.x.mticksbydata$ = 10 30 50 70 90 110 130;
+		xb.text$ = "Time / min";
+	}
+	if(current_layer > 1) {
+		layer.x.showAxes=0;
+		layer.x.showLabels=0;
+		layer.y.showLabels=0;
+		layer.y.showAxes=0;
+		layer.y2.ticks=0;
+		xb.text$ = "";
+		yl.text$ = "";	
+	}
+	layer.x2.ticks=0;
+	layer.y2.ticks=0;
+	// legend itself
+	legendupdate mode:=lname;
+	legend.font = font(Times New Roman);
+	legend.fsize = 20;
+	// symbols
+	set %c -k $(i);	//Change symbol
+	set %c -kf 1; //Change interior to be open
+	set %c -skip 20;	//skip symbols
+	
+	ty ;
+}
+
+page.active$ = ms data;

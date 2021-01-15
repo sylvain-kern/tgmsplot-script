@@ -109,68 +109,31 @@ page.active$ = tg data;
 
 wks.addcol(PolyCoef);  // add a new column for polynomial coefficients
 
-if(col(4)[1]==1) {
+//	counting segment blocks
 
-	wks.addcol(segments);
+col(D)[L]$=Segment;
+
+wks.addcol(segstart);
+col(segstart)[1]=0;
+wks.addcol(segstop);
+
+if(col(Segment)[1]==1) {
 	range rr = col(1);		//calculating size of first segment (where temperature is approx. linear)
 	int nrows = rr.GetSize();
-
-	//for(int i=1; i<=nrows; i++) {
-		//if(col(4)[i]==1) {
-			//nfirstsegment++;
-		//}
-		//else if(col(4)[i]==2) {
-			//break;
-		//}
-	//}
-
+	
 	for(int i=1; i<=nrows; i++) {
-		switch(col(4)[i]) {
-		case 1:
-			col(segments)[1]=i;
-			break;
-		case 2:
-			col(segments)[2]=i;
-			break;
-		case 3:
-			col(segments)[3]=i;
-			break;
-		case 4:
-			col(segments)[4]=i;
-			break;
-		case 5:
-			col(segments)[5]=i;
-			break;
-		case 6:
-			col(segments)[6]=i;
-			break;
-		case 7:
-			col(segments)[7]=i;
-			break;
-		case 8:
-			col(segments)[8]=i;
-			break;
-		case 9:
-			col(segments)[9]=i;
-			break;
-		default:
-			col(segments)[$(col(d)[$(nrows)]]=$(nrows);
-			break;
-		}
+		col(segstart)[$(col(Segment)[$(i)])+1] = i+1;
+		col(segstop)[$(col(Segment)[$(i)])] = i;
 	}
-	int nfirstsegment = col(segments)[1];
-
-	col(firstsegment)[1] = nfirstsegment;
-	ty Size of first segment: $(nfirstsegment);
-
+	col(segstart)[$(col(Segment)[$(rr.getSize())])+1] = "";
 }
 else {
 	range rr = col(1);
-	int nfirstsegment = rr.getSize();
-	col(firstsegment)[1] = nfirstsegment;
-	col(segments)[1] = nfirstsegment;
-	ty Size of first segment: $(nfirstsegment);
+	col(segstop)[1] = rr.GetSize();
 }
+
+//fitting temperature
+
 
 fitPoly iy:=(1[1:$(nfirstsegment)],2[1:$(nfirstsegment)]) polyorder:=1 coef:=col(PolyCoef);	// performs fitting col 1 (x) and 2 (y) and stores the coefs in col(PolyCoef) 
 fitPoly.= ;	// displays regression information (r0 etc.)
@@ -190,16 +153,39 @@ run.file(tgmsplot-script\import-bl.ogs);	// import bl
 
 /*	calculating temperature points in MS worksheet */
 
+sparklines sel:=0;
+range mass_loss = col(massloss);
+
 page.active$ = ms data;
-//wks.addcol(temp);
+/* Calculates temperature in ms sheet
+*/
 colmove col(temp) operation:=first;
 col(temp)[L]$ = temperature;
 col(temp)[U]$ = °C;
-
-
 col(temp) = T_0 + rate*col(reltime);
-
 wks.col1.type = 4;
 
+int smoothingpointstg = 0;
+getn
+(Number of points for smoothing tg) smoothingpointstg;
+ty "You chose $(smoothingpointstg) points for smoothing TG";
 
 
+/* Puts TG mass loss in ms sheet
+*/
+wks.col = 3;
+wks.insert(massloss);
+for(int i=1; i<=mass_loss.GetSize(); i++) {
+	col(massloss)[i] = mass_loss[i];
+}
+wks.col = 4;
+wks.insert(mlsmth);
+smooth iy:=col(massloss) oy:=col(mlsmth) npts:=$(smoothingpointstg);
+col(massloss)[L]$ = tg mass loss;
+col(massloss)[U]$ = "%";
+col(mlsmth)[L]$ = tg mass loss smoothed;
+col(mlsmthà[U]$ = "%";
+
+sparklines sel:=0;
+
+win -r %H data;

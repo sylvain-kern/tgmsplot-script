@@ -43,6 +43,8 @@ wks.col(A).format = 2;
 
 if(col(A)[L]$ == ASCII SAMPLE CYCLES :) {
 
+	ty importing MID!;
+	
 	for(int i=1; i<=nrows; i++) {
 		if(col(A)[$(i)]$ == "Datablock 0"){
 			col(B)[1]=i;	//storing values in cells because variables have no scope and reset when exiting if
@@ -105,7 +107,7 @@ if(col(A)[L]$ == ASCII SAMPLE CYCLES :) {
 	impasc fname:=datapath_ms$ 
 		options.PartImp.Partial:=1
 		options.PartImp.FirstCol:=1
-		options.PartImp.LastCol:=30
+		options.PartImp.LastCol:=500
 		options.PartImp.FirstRow:=$(startline2)
 		options.PartImp.LastRow:=0
 
@@ -115,7 +117,7 @@ if(col(A)[L]$ == ASCII SAMPLE CYCLES :) {
 		options.Hdr.Units:=0
 
 		options.ImpMode:=4
-		options.Cols.NumCols:=30
+		options.Cols.NumCols:=500
 		options.Cols.AutoColTypes:=2
 		options.Sparklines:=1                     /* turn off sparklines */
 		options.Names.AutoNames:=0                /* turn off auto rename */
@@ -125,6 +127,17 @@ if(col(A)[L]$ == ASCII SAMPLE CYCLES :) {
 		
 	wks.name$ = ms data;
 
+	//	deleting all blank columns
+	
+	ncols=wks.ncols;
+	for(ii=ncols;ii>=1;ii--)
+	{
+		if (wks.col$(ii).nrows==0)
+		{
+			del col($(ii));
+		}
+	}
+	
 	//break;
 
 	/*	Counting datablocks information */
@@ -156,28 +169,31 @@ if(col(A)[L]$ == ASCII SAMPLE CYCLES :) {
 		range datablock = col(A);
 		nmz = datablock.GetSize() - 1;
 		for(int i=2; i<=nmz+1; i++) {
+			page.active$ = mz sheet;
+			int mznb = col(B)[i];
 			string mz$ = "M/z = "+col(B)[i]$;
 			col(mzlabels)[$(i)]$ = mz$;
 			page.active$ = ms data;
 			col($(i+3))[L]$ = mz$;
 			col($(i+3))[U]$ = "A";
-			page.active$ = mz sheet;
+			col($(i+3))[C]$ = "raw";
 		}
 	}
 	else {
 		range datablock = col(A);
 		nmz = datablock.GetSize() - 7;
-		for(int i=4; i<=nmz+4; i++) {
+		for(int i=4; i<nmz+4; i++) {
 			if(col(A)[$(i)]$ == "Datablock 2") {
 				break;
 			}
 			else {
+				page.active$ = mz sheet;
 				string mz$ = "M/z = "+col(B)[i]$;
 				col(mzlabels)[$(i)]$ = mz$;
 				page.active$ = ms data;
 				col($(i+2))[L]$ = mz$;
 				col($(i+2))[U]$ = "A";
-				page.active$ = mz sheet;
+				col($(i+2))[C]$ = "raw";
 			}
 		}
 	}
@@ -213,7 +229,7 @@ if(col(A)[L]$ == ASCII SAMPLE CYCLES :) {
 
 	delete col(A);
 	delete col(C1);
-
+	
 	col(B)[G]$ = date;
 	col(date)[L]$ = date;
 
@@ -225,27 +241,41 @@ if(col(A)[L]$ == ASCII SAMPLE CYCLES :) {
 	wks.col(reltime).type = 4;	// set reltime column to x
 
 	wks.addcol(temp);
+	col(temp)[L]$ = temperature;
+	col(temp)[U]$ = °C;
 	colmove col(temp) operation:=first;
+	
+	/*	Back to the program
+	*/
 
 	colmove col(reltime) operation:=first;
 
+	del col(date);
+	
 	ty "MS data importation done!";
 	ty "\n";
 
 
-	/* Saving the number of datablocks */
-
+	/* Saving the number of datablocks
+	*/
 	page.active$ = mz sheet;
-
 	wks.addcol(ndblks);
 	col(ndblks)[1] = ndatablocks;
+	
+	/*	removing one more column
+	*/
+	page.active$ = mz sheet;
+	if (col(ndblks)[1]==4) {
+		page.active$ = ms data;
+		delete col(C3);
+	}
+	page.active$ = ms data;
 }
 
 
 if(col(A)[L]$ == ASCII SCAN BARGRAPH CYCLES :) {
 
-	ty Importing bargraph!;
-	ty "The program will automatically plot all the MS data without TG or BL importation.";
+	ty Importing BARGRAPH!;
 	ty "--this step may take while, due to the huge number of columns to import and process.";
 	ty "Don't worry...";
 	
@@ -301,7 +331,18 @@ if(col(A)[L]$ == ASCII SCAN BARGRAPH CYCLES :) {
 		
 	wks.name$ = ms data;
 
-
+	//deleting all blank columns
+	
+	ncols=wks.ncols;
+	for(ii=ncols;ii>=1;ii--)
+	{
+		if (wks.col$(ii).nrows==0)
+		{
+			del col($(ii));
+		}
+	}
+	
+	
 	/*	Naming current measurements with mz */
 
 	ty "Pasting the M/z labels...";
@@ -328,6 +369,7 @@ if(col(A)[L]$ == ASCII SCAN BARGRAPH CYCLES :) {
 		page.active$ = import sheet;
 	}
 	
+	page.active$ = import sheet;
 	layer -dd;	//delete the worksheet cuz it is not needed anymore
 	
 
@@ -345,18 +387,77 @@ if(col(A)[L]$ == ASCII SCAN BARGRAPH CYCLES :) {
 	col(reltime)[L]$ = time;
 	col(reltime) = col(reltime)/60;
 	col(reltime)[U]$ = min;
-
+	
+	col(C3)[G]$ = tic;
+	col(tic)[L]$ = total ion current;
+	col(reltime)[U]$ = A;
+	
+	
 	wks.col(reltime).type = 4;	// set reltime column to x
 
 	colmove col(reltime) operation:=first;
 
 	ty "MS data importation done!";
 	ty "\n";
-
-	run.file(tgmsplot-script\plot-ms-time.ogs);
+	
+	del col(date);
+	del col(C1);
+	
+	//run.file(tgmsplot-script\plot-ms-time.ogs);
+	
 	break;
 }
+
+
+
+//	S M O O T H I N G
+
+int smoothingpoints = 0;
+getn
+(Number of points for smoothing ms) smoothingpoints;
+ty "You chose $(smoothingpoints) points for smoothing";
+
+
+if (smoothingpoints != 0) {
+
+	ty "smoothing...";
+
+	page.active$ = mz sheet;
+	range rr=col(mz);
+	int beg, end;
+
+	if(col(ndblks)[1]==1) {
+		beg = 2;
+		end = rr.getSize();
+	}
+	else if(col(ndblks)[1]==4) {
+		beg = 4;
+		end = rr.getSize()-4;
+	}
 	
+	range mz = col(mz)[$(beg):$(end)];
+
+	ty "M/z curves to smooth: $(mz)";
+	
+	page.active$ = ms data;
+	
+	for(int i=1; i<=mz.GetSize(); i++) {
+		ty "smoothing M/z = $(mz[i])";
+		wks.col = 2*$(i)+2;
+		wks.insert("smth"$(i));
+		col(smth$(i))[L]$ = M/z = $((mz)[$(i)]) smoothed;
+		col("M/z = $((mz)[$(i)]) smoothed")[U]$ = A;
+		smooth iy:=col("M/z = $((mz)[$(i)])") oy:=col("M/z = $((mz)[$(i)]) smoothed") npts:=$(smoothingpoints);
+	}
+	col($(2*mz.GetSize()+3))[L]$ = analog input;
 }
+else {
+	ty "No smoothing";
+}
+
+sparklines sel:=0;
+
+
+win -r %H data;
 
 /*	T R A S H */
