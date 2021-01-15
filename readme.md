@@ -6,7 +6,9 @@ Origin's website: https://www.originlab.com
 
 This file describes how to install and use it. For more details on in-depth use, see the documentation in the following folder:
 
-documentation/documentation.pdf
+```
+procedure/procedure.pdf
+```
 
 ## Installation
 
