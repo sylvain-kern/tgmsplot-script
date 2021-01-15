@@ -18,7 +18,7 @@ Run `setup.exe` in the setup folder. When it asks for the installation folder, p
 
 To install manually, just put the `tgmsplot-script` folder in the Origin files folder:
 ```
-C:\Program Files\OriginLab\Origin\Origin2016
+C:\Program Files\OriginLab\Origin2016
 ```
 
 Again, the very folder may change depending on your version of Origin, so be careful.
