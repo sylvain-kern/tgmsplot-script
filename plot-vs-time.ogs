@@ -169,7 +169,7 @@ for(int i=1; i<=dsChecked.GetSize(); i++){
 	legend.font = font(Times New Roman);
 	legend.fsize = 20;
 	// symbols
-	set %c -k $(i);	//Change symbol
+	set %c -k $(current_layer);	//Change symbol
 	set %c -kf 1; //Change interior to be open
 	set %c -skip 20;	//skip symbols
 	
