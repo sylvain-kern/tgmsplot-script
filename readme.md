@@ -1,6 +1,6 @@
 readme.md
 
-# tgms-plot-script
+# tgmsplot-script
 
 `tgmsplot-script` is a script for Origin software to automate data treatment and plot for mass spectrometry and thermogravimetry experiences using the Netzsch equipment.
 
@@ -50,6 +50,8 @@ You can put custom button groups in the Origin toolbar to execute the scripts wi
 https://www.originlab.com/doc/Origin-Help/UserDef-Custom-Toobar-Button
 
 ## Issues
+
+Main has still to do things --or be deleted
 
 Segment management is not on point.
 
