@@ -49,6 +49,19 @@ You can put custom button groups in the Origin toolbar to execute the scripts wi
 
 https://www.originlab.com/doc/Origin-Help/UserDef-Custom-Toobar-Button
 
+A custom bitmap is provided in this repository, at
+
+```
+button-bitmap/bitmap.bmp
+```
+
+It contains the bitmap for 4 buttons, which can be respectively linked to the following files:
+
+- `import-ms.ogs`
+- `import-tg.ogs`
+- `plot-vs-time.ogs`
+- `plot-vs-temp.ogs`
+
 ## Issues
 
 Main has still to do things --or be deleted
