@@ -4,7 +4,7 @@ readme.md
 
 `tgmsplot-script` is a script for Origin software to automate data treatment and plot for mass spectrometry and thermogravimetry experiments using Netzsch equipment.
 
-This file describes how to install and use it. For more details on in-depth use, see the procedure in the following folder:
+This file explains how to install and use it. For more details on in-depth use, see the procedure in the following folder:
 
 ```
 procedure/procedure.pdf
@@ -21,7 +21,7 @@ To install manually, just put the `tgmsplot-script` folder in the Origin files f
 C:\Program Files\OriginLab\Origin2016
 ```
 
-Again, the very folder may change depending on your version of Origin, so be careful.
+Again, the very folder may change depending on your version of Origin --here I am using Origin 2016, so be careful.
 
 ## Usage
 
@@ -56,3 +56,4 @@ Main has still to do things --or be deleted
 Segment management is not on point.
 
 The graphs still need a bit of manual formatting.
+```

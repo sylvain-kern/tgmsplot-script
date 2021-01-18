@@ -1,0 +1,13 @@
+# makes git ignore all the latex junk
+
+procedure/
+
+procedure/*.aux
+procedure/*.log
+procedure/*.out
+procedure/*.synctex.gz
+procedure/*.toc
+
+procedure/figures/
+procedure/_minted-procedure/
+procedure/img_illustration/
