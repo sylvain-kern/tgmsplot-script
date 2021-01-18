@@ -1,4 +1,7 @@
 \documentclass[a4paper, 11pt, raggedright, parskip]{tufte-style-article}
+% 	class avaliable at:
+%	https://github.com/sylvain-kern/tufte-style-article
+%
 
 \usepackage{lipsum}
 
@@ -6,12 +9,11 @@
 \title{\sffamily\textls{\MakeUppercase{{\Huge Procedure}\\\vskip10pt to plot mass spectroscopy and thermogravimetry data from Netzsch Dispsav and Proteus in Origin software}}}
 \author{Sylvain Kern}
 
-\begin{document}
 
+\begin{document}
 
 \maketitle
 \hfill
-
 
 This is a guide to process and plot the mass spectroscopy (MS) and thermogravimetry (TG) data recorded from the Netzsch pieces of equipment in Origin 2016 software.\marginnote{Origin 2016 - \url{https://www.originlab.com/index.aspx?go=PRODUCTS/Origin}} This also includes some scripts to automate the process.
 
@@ -34,6 +36,7 @@ All source files can be found at \url{...} along with this very procedure in \te
 \thispagestyle{plain}
 \tableofcontents
 
+
 \newpage
 \section{Manual procedure}
 \label{sec:full_procedure}
@@ -45,7 +48,9 @@ Here is a way to quickly\marginnote{The manual procedure is actually quite long 
 
 %\widefig{figures/bliss.jpg}{Blissomaxxouillamosse}{fig:bliss}
 
+
 \subsection{Exports}
+
 
 \subsubsection{Export MS data from  Dispsav}
 
@@ -80,6 +85,7 @@ Here is a way to quickly\marginnote{The manual procedure is actually quite long 
 \subsubsection{Export baseline data}
 
 The baseline data is in the same form than the TG data, so the steps are exacly similar than those on the paragraph above. Again, export it with exactly the same number of points and maximum time as in the MS.
+
 
 \subsection{Imports in Origin}
 
@@ -227,20 +233,19 @@ Since temperature \textit{vs.} time is not given in the MS data, it is needed to
 Assuming the {\lsstyle PID} controller for the furnace is well adjusted, the temperature increase in the furnace should be linear so I chose to fit a degree one polynomial in this case.
 
 
-
-
 \subsubsection[Baseline mass loss data interpolation and substraction]{Baseline mass loss data interpolation and substraction\marginnote{This is only needed if the TG and baseline data don't have the same measurement points. If they have been exported from Proteus with the same settings, please ignore this part.}}
-
-
 
 The time points for TG and baseline may not be the same. If it is the case, we will want to interpolate the baseline mass loss data in order to get the correct values to substract from TG ones, since the baseline data does not follow a predictable model.
 
 
 \subsection{Plotting graphs}
 
+
 \subsubsection{For TG}
 
+
 \subsubsection{For MS}
+
 
 \subsubsection{Plot TGMS graph}
 
@@ -260,6 +265,7 @@ Place the \texttt{tgmsplot-script} in the following folder:
 \begin{codebox}{text}
 C:\ProgramFiles\Origin2016\
 \end{codebox}
+
 
 \subsection{Usage}
 
@@ -297,6 +303,7 @@ Then, execute the plot program:
 run.file("C:\Program Files\Origin2016\tgmsplot-script\plot.ogs")
 \end{codebox}
 
+
 \subsubsection{Script and execution details}
 
 The source folder contains the following files:
@@ -304,23 +311,18 @@ The source folder contains the following files:
 \begin{wide}
 \begingroup
 \centering
-\renewcommand*{\arraystretch}{1.4}
+\renewcommand*{\arraystretch}{1.5}
 \begin{tabularx}{.8\linewidth}{rX}
-\inlinecode{text}{changelinlog.ogs}	& changes the $y$ axis on the current to linear or log;\\
-\inlinecode{text}{import-bl.ogs}		& imports baseline data;\\
-\inlinecode{text}{import-ms.ogs}		& imports MS data, whether from 'regular' or bargraph formattings, directly plots if it is from bargraph;\\
+\inlinecode{text}{import-ms.ogs}		& imports MS data, whether from 'regular' or bargraph formattings;\\
 \inlinecode{text}{import-tg.ogs}		& imports tg data;\\
-\inlinecode{text}{main.ogs}			& main execution file, executes all the imports and \textt{plot.ogs};\\
-\inlinecode{text}{plot.ogs}			& asks the user what to plot, then plots it;\\
-\inlinecode{text}{plot-ms-temp}		& plots MS current \textit{vs.} temperature;\\
-\inlinecode{text}{plot-ms-time}		& plots MS current \textit{vs.} time;\\
-\inlinecode{text}{plot-tg}			& plots TG mass loss \textit{vs.} temperature;\\
-\inlinecode{text}{plot-tgms}			& plot MS and TG data on separate layers of the same graph, works only if everything is correctly imported --it is advised to execute it only after \inlinecode{text}{main.ogs} has been executed.\\
+\inlinecode{text}{plot-vs-temp}		& plots chosen data \textit{vs.} temperature;\\
+\inlinecode{text}{plot-vs-time}		& plots chosen data \textit{vs.} time;\\
 \end{tabularx}
 \endgroup
 \end{wide}
 
 I recommend using \texttt{main.ogs} rather than the individual separate files, as some dependency issues may appear.
+
 
 \subsubsection{Button groups}
 
@@ -328,15 +330,14 @@ i n   p r o g r e s s
 
 create new project unlocks access to the buttons
 
+
 \subsection{Issues}
 
 i n   p r o g r e s s
 
-Bargraph data format not supported.
+Bargraph data format not supported. \textsc{it is now}!
 
-Not very robust.
 
-Scripts dependance --only main is advised for execution.
 
 
 
