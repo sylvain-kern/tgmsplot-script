@@ -69,4 +69,3 @@ Main has still to do things --or be deleted
 Segment management is not on point.
 
 The graphs still need a bit of manual formatting.
-```
