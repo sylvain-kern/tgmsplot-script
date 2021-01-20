@@ -11,3 +11,5 @@ procedure/*.toc
 procedure/figures/
 procedure/_minted-procedure/
 procedure/img_illustration/
+
+button-bitmap/bitmap.xcf
