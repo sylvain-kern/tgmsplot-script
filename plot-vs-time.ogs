@@ -7,7 +7,7 @@
 ty "Preparing to plot...";
 ty "";
 
-//worksheet -b data;
+worksheet -b data;
 page.active$ = ms data;
 string wn$=%H;
 string ms_wk$ = "ms data";
