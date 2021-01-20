@@ -55,7 +55,7 @@ Here is a way to quickly\marginnote{The manual procedure is actually quite long 
 
 \subsubsection{Export MS data from  Dispsav}
 
-\begin{ol}
+\begin{enumerate}
 	
 \item Open Aëolos Dispsav.
 
@@ -67,12 +67,12 @@ Here is a way to quickly\marginnote{The manual procedure is actually quite long 
 
 \item Open this \texttt{.asc} file with a notepad and note the number of points and the maximum time, which appear in the header lines or in the last line of the two firsts columns.
 
-\end{ol}
+\end{enumerate}
 
 
 \subsubsection{Export TG data form Netzsch Proteus}
 
-\begin{ol}
+\begin{enumerate}
 	
 \item Open Proteus Analysis.
 	
@@ -80,7 +80,7 @@ Here is a way to quickly\marginnote{The manual procedure is actually quite long 
 
 \item Then go to \texttt{Extras > Export Data...}. Choose the range and number of points\marginnote{Since the TG and MS experiments have been made at the same time with the same temperature increase, the temperature measurements and the step should match for the MS and TG.}. The number of points must be exactly the same as in the \texttt{.asc} file exported from Dispsav. Check that the maximum time matches too.
 
-\end{ol}
+\end{enumerate}
 
 
 \subsubsection{Export baseline data}
@@ -97,7 +97,7 @@ The baseline data is in the same form than the TG data, so the steps are exacly 
 
 Here are the steps to import the first MS data worksheet, \textit{i.e} the relative intensity extrema for each $M/z$.
 
-\begin{ol}
+\begin{enumerate}
 
 \item On Origin, go to \texttt{File > Import > Import Wizard} or press \texttt{Ctrl+3}.
 \margintext{If the \texttt{Import} line does not appear on the \texttt{File} menu, make sure an Origin project is open by clicking \texttt{File > New > Project}.}
@@ -132,7 +132,7 @@ Then, click \texttt{Next}.
 
 \item On \texttt{Save Filters}, leave everything as it is, unless you want to save this import filter for a next time. Click \texttt{Finish}.
 
-\end{ol}
+\end{enumerate}
 
 \newpage
 
@@ -144,7 +144,7 @@ Now your worksheet should look like this:\marginnote{It is possible that Origin 
 
 To import the second MS piece of data, see the following steps.
 
-\begin{ol}
+\begin{enumerate}
 
 \item Create a new worksheet by right-clicking a worksheet tab on the bottom, "\texttt{Add}".
 
@@ -174,7 +174,7 @@ Then, click \texttt{Next}.
 
 \item On \texttt{Save Filters}, leave everything as it is, unless you want to save this import filter for a next time. Click \texttt{Finish}.
 
-\end{ol}
+\end{enumerate}
 
 Your second worksheet should look like this.
 
@@ -197,7 +197,7 @@ To make future worksheet reference easier, I renamed the worksheets with the res
 
 This is a bit shorter than the MS import but it is the same idea.
 
-\begin{ol}
+\begin{enumerate}
 
 \item Create a new worksheet and switch to it.
 
@@ -205,7 +205,7 @@ This is a bit shorter than the MS import but it is the same idea.
 
 \item Plot 
 
-\end{ol}	
+\end{enumerate}	
 
 
 \subsubsection{Import baseline data in \texttt{.txt} format}
@@ -259,7 +259,22 @@ To reduce the time spent on overly repetitive tasks, I produced a LabTalk -- Ori
 
 \subsection{Scripts installation}
 
-Download the folder that contains the source files here \url{...}.
+Go to the following address:
+
+\noindent\url{https://github.com/sylvain-kern/tgmsplot-script}
+
+\noindent and reach for the \inlinecode{text}{setup.exe} file in the \texttt{setup} folder. Download it and run it\marginnote{Do not worry if Windows freaks out and thinks it is a virus, I do not have an authentification certificate indeed, so I can not guarantee to Windows that my program is safe.}. The setup creates a \texttt{tgmsplot-script} folder in the Origin files directory a and puts the script files in it. When installing, verify the destination folder, by default it is
+\begin{codebox}{text}
+C:\Program Files\OriginLab\Origin2016
+\end{codebox}
+but it can change with your version of Origin.
+
+
+\littletitle{Manual installation}
+Download the folder that contains the source files on the project repository:
+
+\noindent\url{https://github.com/sylvain-kern/tgmsplot-script}.
+
 Place the \texttt{tgmsplot-script} in the following folder:
 
 \margintext{If you have a different version of Origin, it may not be '\texttt{...$\backslash$Origin2016}' but whatever your version is.}%
@@ -267,6 +282,8 @@ Place the \texttt{tgmsplot-script} in the following folder:
 C:\ProgramFiles\Origin2016\
 \end{codebox}
 
+\littletitle{Button groups}
+On Origin, go to \texttt{View > Toolbars} or press \texttt{Ctrl+T}. Go to the \texttt{Button groups} tab
 
 \subsection{Usage}
 
@@ -278,17 +295,12 @@ i n s t a l l   b u t t o n s
 Open the command window --this icon \includegraphics[height=12pt]{figures/command window.png} on the right of the top toolbar. Then run the following command:
 
 \begin{codebox}{text}
-run.file("C:\ProgramFiles\Origin2016\tgmsplot-script\main.ogs")
+run.file("C:\ProgramFiles\Origin2016\tgmsplot-script\<file>")
 \end{codebox}
 
-This will sequentially import MS,\marginnote{It works for MS bargraphs too.} TG and BL data, and will draw the graphs.\marginnote{To do separate MS or TG importations, or just plot, see the title below.}
+A file browser window appears, select the file you want to load.
 
-A file browser window appears, select the MS file\marginnote{Note that the scipt will \textls{NOT} work if the file name contains accents or fancy characters.} you wand to load. Click \texttt{Ok} then do the same for the TG and baseline files.
-
-Then choose the plot type you want, and if needed, the different $M/z$ corresponding curves to plot. The data is now plotted.\margintext{The MS curves are not to scale on the $y$ axis, which is not ticked. The TGMS plot is only meant to give a qualitative overview and not precise quantitative information.}
-
-\littletitle{Partial data imports}
-To import only the MS data, run the following in the command window:
+To import only the MS data, run the following in the command window:\marginnote{Note that the scipt will \textls{NOT} work if the file name contains accents or fancy characters.} you wand to load. Click \texttt{Ok} then do the same for the TG and baseline files.\margintext{The MS curves are not to scale on the $y$ axis, which is not ticked. The TGMS plot is only meant to give a qualitative overview and not precise quantitative information.}
 \begin{codebox}{text}
 run.file("C:\Program Files\Origin2016\tgmsplot-script\import-ms.ogs")
 \end{codebox}
