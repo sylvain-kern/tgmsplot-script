@@ -49,7 +49,7 @@ int nCancelled = 1;
 * If user clicks the Cancel button, there would be an error generated. This will stop that behavior.
 */
 {
-dlgChkList inames:=strTexts$ title:="MS vs time" desc:="Choose the M/z to plot:" ochks:=dsDefaults osel:=dsChecked;
+dlgChkList inames:=strTexts$ title:="Plot vs. temperature" desc:="Choose the M/z to plot:" ochks:=dsDefaults osel:=dsChecked;
 // If user clicked the Cancel button, the following line will not run and nCancelled will remain equal to 1.
 nCancelled = 0;
 }
