@@ -1,12 +1,13 @@
 # makes git ignore all the latex junk
 
-procedure/
 
 procedure/*.aux
 procedure/*.log
 procedure/*.out
 procedure/*.synctex.gz
 procedure/*.toc
+procedure/*.fls
+procedure/*.fdb_latexmk
 
 procedure/figures/
 procedure/_minted-procedure/
