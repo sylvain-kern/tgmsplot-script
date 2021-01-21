@@ -127,6 +127,8 @@ if(col(A)[L]$ == ASCII SAMPLE CYCLES :) {
 		
 	wks.name$ = ms data;
 
+	win -r %H data;
+	
 	//	deleting all blank columns
 	
 	ncols=wks.ncols;
@@ -331,6 +333,8 @@ if(col(A)[L]$ == ASCII SCAN BARGRAPH CYCLES :) {
 		
 	wks.name$ = ms data;
 
+
+	
 	//deleting all blank columns
 	
 	ncols=wks.ncols;
@@ -458,6 +462,5 @@ else {
 sparklines sel:=0;
 
 
-win -r %H data;
 
 /*	T R A S H */

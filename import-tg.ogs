@@ -79,6 +79,8 @@ impasc fname:=datapath_tg$
 
 wks.name$ = tg data;
 
+win -r %H data;
+
 col(A)[G]$ = temp;
 col(temp)[L]$ = temperature;
 col(temp)[U]$ = °C;
@@ -188,4 +190,3 @@ col(mlsmthà[U]$ = "%";
 
 sparklines sel:=0;
 
-win -r %H data;
