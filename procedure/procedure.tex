@@ -1,4 +1,4 @@
-\documentclass[a4paper, 11pt, raggedright, parskip]{tufte-style-article}
+\documentclass[a4paper, 11pt, raggedright, parskip, sans, colorful]{tufte-style-article}
 % 	class avaliable at:
 %	https://github.com/sylvain-kern/tufte-style-article
 %
@@ -6,7 +6,7 @@
 \usepackage{lipsum}
 
 
-\title{\sffamily\textls{\MakeUppercase{{\Huge Procedure}\\\vskip10pt to plot mass spectroscopy and thermogravimetry data from Netzsch Dispsav and Proteus in Origin software}}}
+\title{\sffamily{{\Huge\scshape Procedure}\\\vskip10pt to plot Mass Spectroscopy\\and Thermogravimetry data\\from Netzsch Dispsav and Proteus\\in Origin software}}
 \author{Sylvain Kern}
 
 
@@ -19,7 +19,11 @@
 This is a guide to process and plot the mass spectroscopy (MS) and thermogravimetry (TG) data recorded from the Netzsch pieces of equipment in Origin 2016 software.\marginnote{Origin 2016 - \url{https://www.originlab.com/index.aspx?go=PRODUCTS/Origin}} This also includes some scripts to automate the process.
 
 
-All source files can be found at \url{...} along with this very procedure in \texttt{.pdf} or \texttt{.md} formats for user convenience.
+The script source files and setup can be found at :
+
+\noindent \url{https://github.com/sylvain-kern/tgmsplot-script}
+
+\noindent along with this very procedure in \inlinecode{text}{.pdf} or \inlinecode{text}{.md} formats for user convenience.
 
 \vfill
 
@@ -34,20 +38,24 @@ All source files can be found at \url{...} along with this very procedure in \te
 \end{center}
 
 
+\newpage
 \thispagestyle{plain}
 \tableofcontents
 
 
-\newpage
 \section{Manual procedure}
 \label{sec:full_procedure}
 
-Here is a way to quickly\marginnote{The manual procedure is actually quite long and repetitive, so there is an Origin script presented in section \ref{sec:origin_scripting}.} get \textls{TGMS} plots from data collected in the different Netzsch pieces of software, using Origin.
+Here is a way to get \textls{TGMS} plots from data collected in the different Netzsch pieces of software, using Origin.   
 
 \margintext {This is a visual overview of the procedure explained below.}%
-\includegraphics[width=\textwidth]{figures/overview.png}
-
+\bgroup
+\footnotesize
+\input{overview.pdf_tex}
+\egroup
 %\widefig{figures/bliss.jpg}{Blissomaxxouillamosse}{fig:bliss}
+
+However, this procedure can be quite repetitive, so a script that executes it automatically is presented in section \ref{sec:origin_scripting}.
 
 
 \subsection{Exports}
@@ -59,13 +67,13 @@ Here is a way to quickly\marginnote{The manual procedure is actually quite long 
 	
 \item Open Aëolos Dispsav.
 
-\item Go to the \texttt{Process} tab, go to \texttt{Cycles...} and open the desired \texttt{.mdc}.
+\item Go to the \inlinecode{text}{Process} tab, go to \inlinecode{text}{Cycles...} and open the desired \inlinecode{text}{.mdc}.
 
-\item Then go to \texttt{File > Convert to ASCII...}. 
+\item Then go to \inlinecode{text}{File > Convert to ASCII...}. 
 
-\item Save the \texttt{.asc} file into a chosen folder.
+\item Save the \inlinecode{text}{.asc} file into a chosen folder.
 
-\item Open this \texttt{.asc} file with a notepad and note the number of points and the maximum time, which appear in the header lines or in the last line of the two firsts columns.
+\item Open this \inlinecode{text}{.asc} file with a notepad and note the number of points and the maximum time, which appear in the header lines or in the last line of the two firsts columns.
 
 \end{enumerate}
 
@@ -76,9 +84,9 @@ Here is a way to quickly\marginnote{The manual procedure is actually quite long 
 	
 \item Open Proteus Analysis.
 	
-\item Go to \texttt{File > Open...} and open the \texttt{.ngb-ss1} file of your choice.
+\item Go to \inlinecode{text}{File > Open...} and open the \inlinecode{text}{.ngb-ss1} file of your choice.
 
-\item Then go to \texttt{Extras > Export Data...}. Choose the range and number of points\marginnote{Since the TG and MS experiments have been made at the same time with the same temperature increase, the temperature measurements and the step should match for the MS and TG.}. The number of points must be exactly the same as in the \texttt{.asc} file exported from Dispsav. Check that the maximum time matches too.
+\item Then go to \inlinecode{text}{Extras > Export Data...}. Choose the range and number of points\marginnote{Since the TG and MS experiments have been made at the same time with the same temperature increase, the temperature measurements and the step should match for the MS and TG.}. The number of points must be exactly the same as in the \inlinecode{text}{.asc} file exported from Dispsav. Check that the maximum time matches too.
 
 \end{enumerate}
 
@@ -99,88 +107,82 @@ Here are the steps to import the first MS data worksheet, \textit{i.e} the relat
 
 \begin{enumerate}
 
-\item On Origin, go to \texttt{File > Import > Import Wizard} or press \texttt{Ctrl+3}.
-\margintext{If the \texttt{Import} line does not appear on the \texttt{File} menu, make sure an Origin project is open by clicking \texttt{File > New > Project}.}
+\item On Origin, go to \inlinecode{text}{File > Import > Import Wizard} or press \inlinecode{text}{Ctrl+3}.
+\margintext{If the \inlinecode{text}{Import} line does not appear on the \inlinecode{text}{File} menu, make sure an Origin project is open by clicking \inlinecode{text}{File > New > Project}.}
 
-\item On the \texttt{Import Wizard - Source} window, select the MS data file you saved. Make sur the data type ASCII is selected, and click \texttt{Next}.
+\item On the \inlinecode{text}{Import Wizard - Source} window, select the MS data file you saved. Make sur the data type ASCII is selected, and click \inlinecode{text}{Next}.
 
 \includegraphics[width=.8\textwidth]{figures/import ms/source_1.png}
 
-\item On the \texttt{Import Wizard - Header Lines} window, specify the number of header lines --\textit{i.e.} the number of lines which will be ignored by Origin. Leave the \texttt{Number of subheader lines} at \texttt{0}, and \texttt{Long Names} at \texttt{0} too.
+\item On the \inlinecode{text}{Import Wizard - Header Lines} window, specify the number of header lines --\textit{i.e.} the number of lines which will be ignored by Origin. Leave the \inlinecode{text}{Number of subheader lines} at \inlinecode{text}{0}, and \inlinecode{text}{Long Names} at \inlinecode{text}{0} too.
 
 \includegraphics[width=.8\textwidth]{figures/import ms/header_lines_1.png}
 
 The data preview should look like this: header lines in  black and data lines in gray.
 
-Then, click \texttt{Next}.
+Then, click \inlinecode{text}{Next}.
 
-\item On \texttt{Variable Extraction} window, verify that the \texttt{Save file into a workbook} box is ticked. Leave the other boxes blank and click \texttt{Next}. 
+\item On \inlinecode{text}{Variable Extraction} window, verify that the \inlinecode{text}{Save file into a workbook} box is ticked. Leave the other boxes blank and click \inlinecode{text}{Next}. 
 
 \includegraphics[width=.8\textwidth]{figures/import ms/variable_extraction_1.png}
 
-\item On \texttt{File name options}, tick the \texttt{Worksheet with filename} box and leave the others alone. Then go \texttt{Next}.
+\item On \inlinecode{text}{File name options}, tick the \inlinecode{text}{Worksheet with filename} box and leave the others alone. Then go \inlinecode{text}{Next}.
 
 \includegraphics[width=.8\textwidth]{figures/import ms/file_name_options_1.png}
 
-\item On \texttt{Data Columns}, select the number of columns there are in the imported file, -- here 6, click \texttt{Apply} and make sure that the data is properly formatted in the preview window. Select the \texttt{1,000.00} numeric separator and go to the \texttt{Next} page.
+\item On \inlinecode{text}{Data Columns}, select the number of columns there are in the imported file, -- here 6, click \inlinecode{text}{Apply} and make sure that the data is properly formatted in the preview window. Select the \inlinecode{text}{1,000.00} numeric separator and go to the \inlinecode{text}{Next} page.
 
 \includegraphics[width=.8\textwidth]{figures/import ms/data_columns_1.png}
 
-\item On \texttt{Data Selection}, just leave \texttt{Partial import} to \texttt{None} click \texttt{Next} --~the data should be correctly displayed in the window below, just like in the last step. Then go \texttt{Next}.
+\item On \inlinecode{text}{Data Selection}, just leave \inlinecode{text}{Partial import} to \inlinecode{text}{None} click \inlinecode{text}{Next} --~the data should be correctly displayed in the window below, just like in the last step. Then go \inlinecode{text}{Next}.
 
 \includegraphics[width=.8\textwidth]{figures/import ms/data_selection_1.png}
 
-\item On \texttt{Save Filters}, leave everything as it is, unless you want to save this import filter for a next time. Click \texttt{Finish}.
+\item On \inlinecode{text}{Save Filters}, leave everything as it is, unless you want to save this import filter for a next time. Click \inlinecode{text}{Finish}.
 
 \end{enumerate}
 
-\newpage
-
-Now your worksheet should look like this:\marginnote{It is possible that Origin creates another empty worksheet with the same name as the one you created, and I don't know why. You can just delete it by right-clicking on it \texttt{> Delete}.}
+Now your worksheet should look like this:\marginnote{It is possible that Origin creates another empty worksheet with the same name as the one you created, and I don't know why. You can just delete it by right-clicking on it \inlinecode{text}{> Delete}.}
 
 \includegraphics[width=\textwidth]{figures/import ms/data_preview_1.png}
-
-
 
 To import the second MS piece of data, see the following steps.
 
 \begin{enumerate}
 
-\item Create a new worksheet by right-clicking a worksheet tab on the bottom, "\texttt{Add}".
+\item Create a new worksheet by right-clicking a worksheet tab on the bottom, "\inlinecode{text}{Add}".
 
-\item Open \texttt{File > Import > Import Wizard} or press \texttt{Ctrl+3}.
+\item Open \inlinecode{text}{File > Import > Import Wizard} or press \inlinecode{text}{Ctrl+3}.
 
-\item On the \texttt{Import Wizard - Source} window, select the MS data file you saved. Make sur the data type ASCII is selected, and click \texttt{Next}.
+\item On the \inlinecode{text}{Import Wizard - Source} window, select the MS data file you saved. Make sur the data type ASCII is selected, and click \inlinecode{text}{Next}.
 
-\item On the \texttt{Import Wizard - Header Lines} window, specify the number of header lines --\textit{i.e.} the number of lines which will be ignored by Origin. This time, put the \texttt{Number of subheader lines} at 1, and \texttt{Long Names} at 1 too.
+\item On the \inlinecode{text}{Import Wizard - Header Lines} window, specify the number of header lines --\textit{i.e.} the number of lines which will be ignored by Origin. This time, put the \inlinecode{text}{Number of subheader lines} at 1, and \inlinecode{text}{Long Names} at 1 too.
 
 \includegraphics[width=.8\textwidth]{figures/import ms/header_lines_2.png}
 
 The data preview should look like this, with the subheader lines highlighted in blue.
 
-Then, click \texttt{Next}.
+Then, click \inlinecode{text}{Next}.
 
-\item On \texttt{Variable Extraction} window, verify that the \texttt{Save file into a workbook} box is ticked. Leave the other boxes blank and click \texttt{Next}. 
+\item On \inlinecode{text}{Variable Extraction} window, verify that the \inlinecode{text}{Save file into a workbook} box is ticked. Leave the other boxes blank and click \inlinecode{text}{Next}. 
 
-\item On \texttt{File name options}, tick the \texttt{Worksheet with filename} box and leave the others alone. Then go \texttt{Next}.
+\item On \inlinecode{text}{File name options}, tick the \inlinecode{text}{Worksheet with filename} box and leave the others alone. Then go \inlinecode{text}{Next}.
 
-\item On \texttt{Data Columns}, select the number of columns there are in the imported file, -- here 25, click \texttt{Apply} and make sure that the data is properly formatted in the preview window. Select the \texttt{1,000.00} numeric separator and go to the \texttt{Next} page.
+\item On \inlinecode{text}{Data Columns}, select the number of columns there are in the imported file, -- here 25, click \inlinecode{text}{Apply} and make sure that the data is properly formatted in the preview window. Select the \inlinecode{text}{1,000.00} numeric separator and go to the \inlinecode{text}{Next} page.
 
 \includegraphics[width=.8\textwidth]{figures/import ms/data_columns_2.png}
 
-\item On \texttt{Data Selection}, just leave \texttt{Partial import} to \texttt{None} and click \texttt{Next} --~the data should be correctly displayed in the window below, just like in the last step. Then go \texttt{Next}.
+\item On \inlinecode{text}{Data Selection}, just leave \inlinecode{text}{Partial import} to \inlinecode{text}{None} and click \inlinecode{text}{Next} --~the data should be correctly displayed in the window below, just like in the last step. Then go \inlinecode{text}{Next}.
 
 \includegraphics[width=.8\textwidth]{figures/import ms/data_selection_2.png}
 
-\item On \texttt{Save Filters}, leave everything as it is, unless you want to save this import filter for a next time. Click \texttt{Finish}.
+\item On \inlinecode{text}{Save Filters}, leave everything as it is, unless you want to save this import filter for a next time. Click \inlinecode{text}{Finish}.
 
 \end{enumerate}
 
-Your second worksheet should look like this.
-
 Now you have two worksheets, one with $M/z$ data, the other with the actual MS curves.
 
-To make future worksheet reference easier, I renamed the worksheets with the respective names "\texttt{mz sheet}", "\texttt{ms data}". To do the same, right-click a worksheet tab on the bottom, "\texttt{Name and Comments...}" and fill the "\texttt{Short Name}" field.
+To make future worksheet reference easier, I renamed the worksheets with the respective names "\inlinecode{text}{mz sheet}", "\inlinecode{text}{ms data}". To do the same, right-click a worksheet tab on the bottom, "\inlinecode{text}{Name and Comments...}" and fill the "\inlinecode{text}{Short Name}" field.
 
 \includegraphics[width=.5\textwidth]{figures/import ms/renamed.png}
 
@@ -192,7 +194,7 @@ To make future worksheet reference easier, I renamed the worksheets with the res
 \includegraphics[height=200pt]{figures/import ms/data_preview_2.png}
 \end{wide}
 
-\subsubsection{Import TG data in \texttt{.txt} format}
+\subsubsection{Import TG data in \inlinecode{text}{.txt} format}
 \label{subsubsec:import_tg}
 
 This is a bit shorter than the MS import but it is the same idea.
@@ -201,14 +203,13 @@ This is a bit shorter than the MS import but it is the same idea.
 
 \item Create a new worksheet and switch to it.
 
-\item Reach \texttt{File > Import > Import Wizard} and browse the desired file.
+\item Reach \inlinecode{text}{File > Import > Import Wizard} and browse the desired file.
 
-\item Plot 
-
+\item Filter the file the same way as for the MS file (headers and column numbers)
 \end{enumerate}	
 
 
-\subsubsection{Import baseline data in \texttt{.txt} format}
+\subsubsection{Import baseline data in \inlinecode{text}{.txt} format}
 
 The steps are the same than the TG import in paragraph \ref{subsubsec:import_tg} since the files are formatted in the same way.
 
@@ -222,6 +223,21 @@ sThe following steps treat the data to prepare the TGMS plots.
 
 \subsection{Place the $M/z$ labels on MS columns}
 
+\begin{enumerate}
+    \item Switch to the "\inlinecode{text}{mz sheet}" worksheet.
+    \item Create a new column by right-clicking on the empty gray space in the worksheet and selecting \inlinecode{text}{Add new column}.
+    \item Right-click on the new column header and select \inlinecode{text}{Set column values...}.
+    \item On the text area, type the following :
+    \begin{codebox}{text}
+"M/z = "+col(M/z)$
+    \end{codebox}
+    
+    Now the new column should have proper labels.
+    \item Delete the meaningless labels such as "\inlinecode{text}{M/z = Ion current}", select the block of cells with the right label, right-click on it and select \inlinecode{text}{Copy} (or press \inlinecode{text}{Ctrl+C}).
+    \item Go to the "\inlinecode{text}{ms data}" worksheet, select the leftmost columns with ms data (you can find it with the cycle number), right-click on it at the row "\inlinecode{text}{Long Name}" and click \inlinecode{text}{Paste transpose}.
+\end{enumerate}
+
+The MS columns should now be properly labeled.
 
 \subsection{Calculate the relative intensity on mz sheet}
 
@@ -231,10 +247,12 @@ sThe following steps treat the data to prepare the TGMS plots.
 \margintext{The fit must only consider the points where the temperature grows --~approximately~-- linearly, therefore it must omit all points from segment 2 and 3. The temperature increase shows some variations at the beginning, until a stabilized growth settles. Usually, this variation becomes marginal around $T = 200 \text{ °C}$.}
 Since temperature \textit{vs.} time is not given in the MS data, it is needed to whether fit a curve, whether interpolate the data, to get new temperature points corresponding to MS time points.
  
-Assuming the {\lsstyle PID} controller for the furnace is well adjusted, the temperature increase in the furnace should be linear so I chose to fit a degree one polynomial in this case.
+Assuming the temperature growth is more or less I chose to fit a degree one polynomial in this case.
 
 
 \subsubsection[Baseline mass loss data interpolation and substraction]{Baseline mass loss data interpolation and substraction\marginnote{This is only needed if the TG and baseline data don't have the same measurement points. If they have been exported from Proteus with the same settings, please ignore this part.}}
+
+If the exports are correct, with the same number of points, just skip this step.
 
 The time points for TG and baseline may not be the same. If it is the case, we will want to interpolate the baseline mass loss data in order to get the correct values to substract from TG ones, since the baseline data does not follow a predictable model.
 
@@ -259,39 +277,65 @@ To reduce the time spent on overly repetitive tasks, I produced a LabTalk -- Ori
 
 \subsection{Scripts installation}
 
+\subsubsection{Automatic installation}
 Go to the following address:
 
 \noindent\url{https://github.com/sylvain-kern/tgmsplot-script}
 
-\noindent and reach for the \inlinecode{text}{setup.exe} file in the \texttt{setup} folder. Download it and run it\marginnote{Do not worry if Windows freaks out and thinks it is a virus, I do not have an authentification certificate indeed, so I can not guarantee to Windows that my program is safe.}. The setup creates a \texttt{tgmsplot-script} folder in the Origin files directory a and puts the script files in it. When installing, verify the destination folder, by default it is
+\noindent and reach for the \inlinecode{text}{setup.exe} file in the \inlinecode{text}{setup} folder. Download it and run it\marginnote{Do not worry if Windows freaks out and thinks it is a virus, I do not have an authentification certificate indeed, so I can not guarantee to Windows that my program is safe (do not worry, it actually is).}. The setup creates a \inlinecode{text}{tgmsplot-script} folder in the Origin files directory a and puts the script files in it. When installing, verify the destination folder, by default it is
 \begin{codebox}{text}
 C:\Program Files\OriginLab\Origin2016
 \end{codebox}
-but it can change with your version of Origin.
+but it can change with your version of Origin, so check your software version and where the program files are stored.
 
-
-\littletitle{Manual installation}
+\subsubsection{Manual installation}
 Download the folder that contains the source files on the project repository:
 
 \noindent\url{https://github.com/sylvain-kern/tgmsplot-script}.
 
-Place the \texttt{tgmsplot-script} in the following folder:
+Place the \inlinecode{text}{tgmsplot-script} in the following folder (check that this folder is the right for your software files):
 
-\margintext{If you have a different version of Origin, it may not be '\texttt{...$\backslash$Origin2016}' but whatever your version is.}%
+\margintext{If you have a different version of Origin, it may not be '\inlinecode{text}{...$\backslash$Origin2016}' but whatever your version is.}%
 \begin{codebox}{text}
-C:\ProgramFiles\Origin2016\
+C:\ProgramFiles\OriginLab\Origin2016\
 \end{codebox}
 
-\littletitle{Button groups}
-On Origin, go to \texttt{View > Toolbars} or press \texttt{Ctrl+T}. Go to the \texttt{Button groups} tab
+\subsubsection{Button groups installation\marginnote{\label{note:bitmap}The button bitmap :\\\includegraphics[width=\linewidth]{figures/buttons/bitmap.png}}}
+
+For more information about this step, check \url{https://www.originlab.com/doc/Origin-Help/UserDef-Custom-Toobar-Button}.
+
+\begin{enumerate}
+\item On Origin, go to \inlinecode{text}{View > Toolbars} or press \inlinecode{text}{Ctrl+T}. Go to the \inlinecode{text}{Button groups} tab. Click \inlinecode{text}{New}.
+
+\item Choose a name for the button group.
+
+\item Select "$4$" for the number of buttons.
+
+\item For the bitmap, and browse for the file located at:
+\begin{codebox}{text}
+C:\ProgramFiles\OriginLab\Origin2016\tgmsplot-script\button-bitmap\bitmap.bmp
+\end{codebox}
+
+\item Then, right-click on the buttons that appear on the right pane, and assign them to the script files, respectively :
+\begin{itemize}
+    \item \inlinecode{text}{import-ms.ogs}
+    \item \inlinecode{text}{import-tg.ogs}
+    \item \inlinecode{text}{plot-vs-time.ogs}
+    \item \inlinecode{text}{plot-vs-temp.ogs}
+\end{itemize}
+
+\item Drag and drop the buttons in your favourite toolbar on Origin.
+
+\end{enumerate}
+
 
 \subsection{Usage}
 
-\littletitle{Using buttons}
+\subsubsection{Using buttons}
 
-i n s t a l l   b u t t o n s
+If the buttons are installed, just click on them to use the program.
 
-\littletitle{Using the \texttt{run.file} command}
+\subsubsection{Using the \inlinecode{text}{run.file} command}
 Open the command window --this icon \includegraphics[height=12pt]{figures/command window.png} on the right of the top toolbar. Then run the following command:
 
 \begin{codebox}{text}
@@ -300,7 +344,7 @@ run.file("C:\ProgramFiles\Origin2016\tgmsplot-script\<file>")
 
 A file browser window appears, select the file you want to load.
 
-To import only the MS data, run the following in the command window:\marginnote{Note that the scipt will \textls{NOT} work if the file name contains accents or fancy characters.} you wand to load. Click \texttt{Ok} then do the same for the TG and baseline files.\margintext{The MS curves are not to scale on the $y$ axis, which is not ticked. The TGMS plot is only meant to give a qualitative overview and not precise quantitative information.}
+To import only the MS data, run the following in the command window:\marginnote{Note that the scipt will \textls{NOT} work if the file name contains accents or fancy characters.} you wand to load. Click \inlinecode{text}{Ok} then do the same for the TG and baseline files.\margintext{The MS curves are not to scale on the $y$ axis, which is not ticked. The TGMS plot is only meant to give a qualitative overview and not precise quantitative information.}
 \begin{codebox}{text}
 run.file("C:\Program Files\Origin2016\tgmsplot-script\import-ms.ogs")
 \end{codebox}
@@ -321,6 +365,7 @@ run.file("C:\Program Files\Origin2016\tgmsplot-script\plot.ogs")
 
 The source folder contains the following files:
 
+\iffalse
 \begin{wide}
 \begingroup
 \centering
@@ -333,30 +378,23 @@ The source folder contains the following files:
 \end{tabularx}
 \endgroup
 \end{wide}
-
-I recommend using \texttt{main.ogs} rather than the individual separate files, as some dependency issues may appear.
-
-
-\subsubsection{Button groups}
-
-i n   p r o g r e s s
-
-create new project unlocks access to the buttons
+\fi
 
 
 \subsection{Issues}
 
-i n   p r o g r e s s
-
-Bargraph data format not supported. \textsc{it is now}!
+In progress \dots
 
 
+\section{Merge several Origin projects : the \inlinecode{text}{Append} function}
 
+To compare several experiments imported in separated Origin projects, it is possible to merge the \inlinecode{text}{.opj} files with the following procedure :
+\begin{enumerate}\tightlist
+    \item open a new Origin project ;
+    \item go on \inlinecode{text}{File > Append} and select the first project you want to import ;
+    \item repeat the last step for the other project to append.
+\end{enumerate}
 
-
-
-
-
-
+If the temperature increase and the number of points are the same, it is possible to copy/paste the desired data on one single worksheet and plot it directly.
 
 \end{document}
